@@ -1,17 +1,32 @@
 # Zabbix → MAX Alertscripts
 
-Simple Python scripts to send Zabbix alerts to MAX (https://max.ru) via HTTP API.
+Python scripts to send Zabbix alerts to MAX (https://max.ru) via HTTP API.
 
-Useful in environments where Telegram or other messaging platforms are restricted or unavailable.
+Designed as a lightweight replacement for Telegram notifications in restricted environments.
 
 ---
 
 ##  Quick Start
 
-1. Place scripts into /usr/lib/zabbix/alertscripts
-2. Set MAX_BOT_TOKEN
-3. Get chat_id using get_user_id.py
-4. Configure Media type in Zabbix
+bash pip install -r requirements.txt 
+
+1. Copy scripts to:
+      /usr/lib/zabbix/alertscripts   
+
+2. Make them executable:
+   bash    chmod +x /usr/lib/zabbix/alertscripts/*.py    
+
+3. Set bot token:
+   ini    [Service]    Environment="MAX_BOT_TOKEN=YOUR_TOKEN"    
+
+4. Restart Zabbix:
+   bash    sudo systemctl daemon-reexec    sudo systemctl daemon-reload    sudo systemctl restart zabbix-server    
+
+5. Get your chat_id:
+   bash    export MAX_BOT_TOKEN=YOUR_TOKEN    ./get_user_id.py    
+
+6. Configure Zabbix Media type:
+      {ALERT.SENDTO}    {ALERT.SUBJECT}    {ALERT.MESSAGE}   
 
 ---
 
@@ -20,93 +35,36 @@ Useful in environments where Telegram or other messaging platforms are restricte
 - Python 3.6+
 - requests
 
-Install dependencies:
+---
 
-bash pip install -r requirements.txt 
+##  Files
+
+- get_user_id.py — fetches updates to obtain chat_id
+- zabbix_max_http.py — sends alerts to MAX
 
 ---
 
-##  Installation
+##  Zabbix Setup
 
-Copy scripts to:
+- Type: Script  
+- Script name: zabbix_max_http.py  
 
-bash /usr/lib/zabbix/alertscripts 
-
-Make them executable:
-
-bash chmod +x /usr/lib/zabbix/alertscripts/*.py 
+User media:
+- Send to: chat_id
 
 ---
 
-##  Token Configuration
-
-Set your bot token via environment variable MAX_BOT_TOKEN.
-
-Example for systemd:
-
-ini [Service] Environment="MAX_BOT_TOKEN=YOUR_TOKEN" 
-
-Apply changes:
-
-bash sudo systemctl daemon-reexec sudo systemctl daemon-reload sudo systemctl restart zabbix-server 
-
-Verify:
-
-bash sudo systemctl show zabbix-server --property=Environment 
-
----
-
-##  Get chat_id
-
-Run:
-
-bash export MAX_BOT_TOKEN=YOUR_TOKEN ./get_user_id.py 
-
-The script will return JSON with updates. Find your chat_id there.
-
----
-
-##  Zabbix Configuration
-
-1. Go to:
-      Administration → Media types   
-
-2. Create new Media type:
-   - Type: Script
-   - Script name: zabbix_max_http.py
-
-3. Parameters:
-      {ALERT.SENDTO}    {ALERT.SUBJECT}    {ALERT.MESSAGE}   
-
----
-
-##  User Setup
-
-1. Go to:
-      Administration → Users   
-
-2. Add Media:
-   - Type: MAX (created above)
-   - Send to: chat_id
-
----
-
-##  Manual Test
+##  Test
 
 bash export MAX_BOT_TOKEN=YOUR_TOKEN  ./zabbix_max_http.py 123456789 "Test subject" "Test message" 
 
 ---
 
-##  Common Errors
+##  Errors
 
-- MAX_BOT_TOKEN is not set  
-  → token is not configured
-
-- chat_id must be integer  
-  → invalid format
-
-- MAX API error ...  
-  → API returned an error
+- MAX_BOT_TOKEN is not set
+- chat_id must be integer
+- MAX API error
 
 ---
 
@@ -114,4 +72,10 @@ bash export MAX_BOT_TOKEN=YOUR_TOKEN  ./zabbix_max_http.py 123456789 "Test subje
 
 - Uses MAX HTTP API
 - No Telegram dependency
-- Designed for restricted environments
+- Minimal and dependency-light
+
+---
+
+## 📄 License
+
+MI
