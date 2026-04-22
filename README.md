@@ -6,63 +6,67 @@ Useful in environments where Telegram or other messaging platforms are restricte
 
 ---
 
-##  Contents
+##  Quick Start
 
-### 1. get_user_id.py
-Script to retrieve chat_id using MAX API.
-
-Used once to identify your user/chat ID.
-
----
-
-### 2. zabbix_max_http.py
-Main script for sending alerts from Zabbix to MAX.
-
-Designed to be used as a Zabbix AlertScript.
+1. Place scripts into /usr/lib/zabbix/alertscripts
+2. Set MAX_BOT_TOKEN
+3. Get chat_id using get_user_id.py
+4. Configure Media type in Zabbix
 
 ---
 
-## Installation
+##  Requirements
 
-Place scripts into:
+- Python 3.6+
+- requests
 
-/usr/lib/zabbix/alertscripts
+Install dependencies:
+
+bash pip install -r requirements.txt 
+
+---
+
+##  Installation
+
+Copy scripts to:
+
+bash /usr/lib/zabbix/alertscripts 
 
 Make them executable:
 
-chmod +x /usr/lib/zabbix/alertscripts/*.py
+bash chmod +x /usr/lib/zabbix/alertscripts/*.py 
 
 ---
 
-## Token Configuration
+##  Token Configuration
 
 Set your bot token via environment variable MAX_BOT_TOKEN.
 
 Example for systemd:
 
-[Service] Environment="MAX_BOT_TOKEN=YOUR_TOKEN"
+ini [Service] Environment="MAX_BOT_TOKEN=YOUR_TOKEN" 
 
 Apply changes:
 
-sudo systemctl daemon-reexec sudo systemctl daemon-reload sudo systemctl restart zabbix-server
+bash sudo systemctl daemon-reexec sudo systemctl daemon-reload sudo systemctl restart zabbix-server 
 
 Verify:
 
-sudo systemctl show zabbix-server --property=Environment
+bash sudo systemctl show zabbix-server --property=Environment 
 
 ---
 
-## Get chat_id
+##  Get chat_id
 
-Run
+Run:
 
-export MAX_BOT_TOKEN=YOUR_TOKEN ./get_user_id.py
+bash export MAX_BOT_TOKEN=YOUR_TOKEN ./get_user_id.py 
 
 The script will return JSON with updates. Find your chat_id there.
 
 ---
 
-## Zabbix Configuration
+##  Zabbix Configuration
 
 1. Go to:
       Administration → Media types   
@@ -76,7 +80,7 @@ The script will return JSON with updates. Find your chat_id there.
 
 ---
 
-## User Setup
+##  User Setup
 
 1. Go to:
       Administration → Users   
@@ -87,27 +91,27 @@ The script will return JSON with updates. Find your chat_id there.
 
 ---
 
-## Manual Test
+##  Manual Test
 
-export MAX_BOT_TOKEN=YOUR_TOKEN  ./zabbix_max_http.py 123456789 "Test subject" "Test message"
+bash export MAX_BOT_TOKEN=YOUR_TOKEN  ./zabbix_max_http.py 123456789 "Test subject" "Test message" 
 
 ---
 
-## ⚠️ Common Errors
+##  Common Errors
 
 - MAX_BOT_TOKEN is not set  
   → token is not configured
 
 - chat_id must be integer  
-  → invalid chat_id format
+  → invalid format
 
 - MAX API error ...  
   → API returned an error
 
 ---
 
-## 📌 Notes
+##  Notes
 
 - Uses MAX HTTP API
 - No Telegram dependency
-- Suitable for restricted or isolated environments
+- Designed for restricted environments
